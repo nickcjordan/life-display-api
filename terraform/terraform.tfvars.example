@@ -1,0 +1,23 @@
+# Copy this file to terraform.tfvars and customize values
+
+aws_region    = "us-east-1"
+environment   = "prod"
+project_name  = "life-display-api"
+
+# Lambda Configuration
+lambda_memory_size = 256
+lambda_timeout     = 30
+
+# CORS Configuration
+enable_cors        = true
+cors_allow_origins = "*"
+
+# Weather API Configuration (REQUIRED)
+# Sign up at https://openweathermap.org/api to get your API key
+openweather_api_key = "de8901fe7584c8a3ab16753ef9243bcf"
+
+# Location Configuration (Plano, TX - Update if needed)
+latitude      = "33.0198"
+longitude     = "-96.6989"
+location_name = "Plano, TX"
+timezone      = "America/Chicago"
