@@ -44,6 +44,9 @@ resource "aws_lambda_function" "config_handler" {
       LONGITUDE                           = var.longitude
       LOCATION_NAME                       = var.location_name
       TIMEZONE                            = var.timezone
+      GNEWS_API_KEY                       = var.gnews_api_key
+      NEWS_COUNTRY                        = var.news_country
+      NEWS_LANG                           = var.news_lang
       AWS_NODEJS_CONNECTION_REUSE_ENABLED = "1" # Performance optimization
       LOG_LEVEL                           = var.environment == "prod" ? "info" : "debug"
     }

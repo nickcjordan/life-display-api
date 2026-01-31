@@ -1,6 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { weatherHandler } from './handlers/weather';
 import { timeHandler } from './handlers/time';
+import { newsHandler } from './handlers/news';
 import { corsPreflightResponse, errorResponse } from './utils/response';
 import { logger } from './utils/logger';
 
@@ -33,6 +34,11 @@ export async function handler(
     // GET /time
     if (event.httpMethod === 'GET' && event.resource === '/time') {
       return await timeHandler(event);
+    }
+
+    // GET /news
+    if (event.httpMethod === 'GET' && event.resource === '/news') {
+      return await newsHandler(event);
     }
 
     // Method/path not supported

@@ -58,6 +58,31 @@ resource "aws_api_gateway_integration" "get_time" {
   uri                     = aws_lambda_function.config_handler.invoke_arn
 }
 
+# /news resource
+resource "aws_api_gateway_resource" "news" {
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  parent_id   = aws_api_gateway_rest_api.main.root_resource_id
+  path_part   = "news"
+}
+
+# GET /news
+resource "aws_api_gateway_method" "get_news" {
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.news.id
+  http_method   = "GET"
+  authorization = "NONE"
+  api_key_required = true
+}
+
+resource "aws_api_gateway_integration" "get_news" {
+  rest_api_id             = aws_api_gateway_rest_api.main.id
+  resource_id             = aws_api_gateway_resource.news.id
+  http_method             = aws_api_gateway_method.get_news.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.config_handler.invoke_arn
+}
+
 # OPTIONS for CORS on /weather (if enabled)
 resource "aws_api_gateway_method" "options_weather" {
   count         = var.enable_cors ? 1 : 0
@@ -156,6 +181,60 @@ resource "aws_api_gateway_integration_response" "options_time" {
   }
 }
 
+# OPTIONS for CORS on /news (if enabled)
+resource "aws_api_gateway_method" "options_news" {
+  count         = var.enable_cors ? 1 : 0
+  rest_api_id   = aws_api_gateway_rest_api.main.id
+  resource_id   = aws_api_gateway_resource.news.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "options_news" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.news.id
+  http_method = aws_api_gateway_method.options_news[0].http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
+resource "aws_api_gateway_method_response" "options_news" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.news.id
+  http_method = aws_api_gateway_method.options_news[0].http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true
+    "method.response.header.Access-Control-Allow-Methods" = true
+    "method.response.header.Access-Control-Allow-Origin"  = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "options_news" {
+  count       = var.enable_cors ? 1 : 0
+  rest_api_id = aws_api_gateway_rest_api.main.id
+  resource_id = aws_api_gateway_resource.news.id
+  http_method = aws_api_gateway_method.options_news[0].http_method
+  status_code = "200"
+
+  depends_on = [
+    aws_api_gateway_integration.options_news,
+    aws_api_gateway_method_response.options_news,
+  ]
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Api-Key'"
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS'"
+    "method.response.header.Access-Control-Allow-Origin"  = "'${var.cors_allow_origins}'"
+  }
+}
+
 # Lambda permission for API Gateway
 resource "aws_lambda_permission" "api_gateway" {
   statement_id  = "AllowAPIGatewayInvoke"
@@ -172,6 +251,7 @@ resource "aws_api_gateway_deployment" "prod" {
   depends_on = [
     aws_api_gateway_integration.get_weather,
     aws_api_gateway_integration.get_time,
+    aws_api_gateway_integration.get_news,
   ]
 
   lifecycle {
@@ -186,6 +266,9 @@ resource "aws_api_gateway_deployment" "prod" {
       aws_api_gateway_resource.time.id,
       aws_api_gateway_method.get_time.id,
       aws_api_gateway_integration.get_time.id,
+      aws_api_gateway_resource.news.id,
+      aws_api_gateway_method.get_news.id,
+      aws_api_gateway_integration.get_news.id,
     ]))
   }
 }

@@ -70,3 +70,23 @@ variable "timezone" {
   type        = string
   default     = "America/Chicago"
 }
+
+# News Configuration
+variable "gnews_api_key" {
+  description = "GNews API key for news headlines"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "news_country" {
+  description = "Country code for news headlines (e.g., us, gb, ca)"
+  type        = string
+  default     = "us"
+}
+
+variable "news_lang" {
+  description = "Language code for news headlines (e.g., en, es, fr)"
+  type        = string
+  default     = "en"
+}

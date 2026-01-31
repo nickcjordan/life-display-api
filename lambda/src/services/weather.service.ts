@@ -64,7 +64,16 @@ export class WeatherService {
       condition: data.current.weather[0].description,
       icon: this.mapWeatherIcon(data.current.weather[0].icon),
       humidity: data.current.humidity,
+      pressure: data.current.pressure,
+      dewPoint: Math.round(data.current.dew_point),
+      uvIndex: Math.round(data.current.uvi * 10) / 10, // Round to 1 decimal
+      cloudCoverage: data.current.clouds,
+      visibility: data.current.visibility,
       windSpeed: Math.round(data.current.wind_speed),
+      windDirection: data.current.wind_deg,
+      windGust: Math.round(data.current.wind_gust),
+      sunrise: new Date(data.current.sunrise * 1000).toISOString(),
+      sunset: new Date(data.current.sunset * 1000).toISOString(),
       time: this.formatTime(now),
     };
 
@@ -73,24 +82,46 @@ export class WeatherService {
       const hourDate = new Date(hour.dt * 1000);
       return {
         time: this.formatTime(hourDate),
+        timestamp: hourDate.toISOString(),
         hour: hourDate.getHours(),
         temperature: Math.round(hour.temp),
-        precipitation: Math.round(hour.pop * 100),
+        feelsLike: Math.round(hour.feels_like),
+        humidity: hour.humidity,
+        precipitationProbability: Math.round(hour.pop * 100),
+        rainVolume: hour.rain?.['1h'],
+        snowVolume: hour.snow?.['1h'],
+        cloudCoverage: hour.clouds,
+        windSpeed: Math.round(hour.wind_speed),
+        windGust: Math.round(hour.wind_gust),
+        condition: hour.weather[0].description,
         icon: this.mapWeatherIcon(hour.weather[0].icon),
       };
     });
 
-    // Daily forecast (next 7 days)
-    const daily: DailyForecast[] = data.daily.slice(0, 7).map((day) => {
+    // Daily forecast (all days from OpenWeatherMap - typically 8 days including today)
+    const daily: DailyForecast[] = data.daily.map((day) => {
       const dayDate = new Date(day.dt * 1000);
       return {
         date: this.formatDate(dayDate),
+        timestamp: dayDate.toISOString(),
         dayOfWeek: this.getDayOfWeek(dayDate),
+        summary: day.summary,
         high: Math.round(day.temp.max),
         low: Math.round(day.temp.min),
         condition: day.weather[0].description,
         icon: this.mapWeatherIcon(day.weather[0].icon),
-        precipitation: Math.round(day.pop * 100),
+        precipitationProbability: Math.round(day.pop * 100),
+        rainVolume: day.rain,
+        snowVolume: day.snow,
+        humidity: day.humidity,
+        windSpeed: Math.round(day.wind_speed),
+        windGust: Math.round(day.wind_gust),
+        uvIndex: Math.round(day.uvi * 10) / 10,
+        sunrise: new Date(day.sunrise * 1000).toISOString(),
+        sunset: new Date(day.sunset * 1000).toISOString(),
+        moonrise: new Date(day.moonrise * 1000).toISOString(),
+        moonset: new Date(day.moonset * 1000).toISOString(),
+        moonPhase: day.moon_phase,
       };
     });
 

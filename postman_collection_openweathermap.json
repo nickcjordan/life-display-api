@@ -1,0 +1,196 @@
+{
+	"info": {
+		"_postman_id": "openweathermap-api-collection",
+		"name": "OpenWeatherMap API (Raw Data Source)",
+		"description": "Direct API calls to OpenWeatherMap One Call API 3.0 - shows the raw data that the Life Display API consumes and transforms.\n\nThis collection demonstrates what data your backend receives from OpenWeatherMap before formatting it for the ESP32 display.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "One Call API 3.0 - Complete Weather Data",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.openweathermap.org/data/3.0/onecall?lat=33.0198&lon=-96.6989&exclude=minutely,alerts&units=imperial&appid=dc1c736351558d30c78c14fc618756db",
+					"protocol": "https",
+					"host": [
+						"api",
+						"openweathermap",
+						"org"
+					],
+					"path": [
+						"data",
+						"3.0",
+						"onecall"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "33.0198",
+							"description": "Latitude for Plano, TX"
+						},
+						{
+							"key": "lon",
+							"value": "-96.6989",
+							"description": "Longitude for Plano, TX"
+						},
+						{
+							"key": "exclude",
+							"value": "minutely,alerts",
+							"description": "Exclude minutely forecasts and weather alerts (not needed for display)"
+						},
+						{
+							"key": "units",
+							"value": "imperial",
+							"description": "Use Fahrenheit for temperature, mph for wind speed"
+						},
+						{
+							"key": "appid",
+							"value": "dc1c736351558d30c78c14fc618756db",
+							"description": "Your OpenWeatherMap API Key (One Call API 3.0 subscription required)"
+						}
+					]
+				},
+				"description": "**One Call API 3.0** - Returns comprehensive weather data for a single location.\n\n**What this returns:**\n- `current`: Current weather conditions (temp, feels_like, humidity, wind_speed, weather array with description/icon)\n- `hourly`: Array of 48 hourly forecasts (your API uses first 12)\n- `daily`: Array of 8 daily forecasts (your API uses first 7)\n- `timezone`: Timezone name (e.g., 'America/Chicago')\n- `timezone_offset`: UTC offset in seconds\n\n**Data transformation in your API:**\n\nYour Life Display API (`weather.service.ts`) transforms this raw data:\n\n1. **Current weather**: Extracts `temp`, `feels_like`, `humidity`, `wind_speed` from `current` object\n2. **Weather description/icon**: Takes first element from `current.weather[]` array\n3. **Hourly forecast**: Maps first 12 items from `hourly[]` array\n4. **Daily forecast**: Maps first 7 items from `daily[]` array\n5. **Formatting**: Converts Unix timestamps to ISO 8601, renames fields for clarity\n\n**Key differences from your API response:**\n- OpenWeatherMap uses snake_case (e.g., `feels_like`)\n- Your API uses camelCase (e.g., `feelsLike`)\n- OpenWeatherMap returns 48 hours, your API returns 12\n- OpenWeatherMap returns 8 days, your API returns 7\n- OpenWeatherMap uses Unix timestamps, your API uses ISO 8601 strings\n\n**Rate Limits:**\n- One Call API 3.0: 1,000 calls/day (free tier)\n- Your API caching strategy could reduce these calls"
+			},
+			"response": []
+		},
+		{
+			"name": "One Call API 3.0 - With All Options",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.openweathermap.org/data/3.0/onecall?lat=33.0198&lon=-96.6989&units=imperial&appid=dc1c736351558d30c78c14fc618756db",
+					"protocol": "https",
+					"host": [
+						"api",
+						"openweathermap",
+						"org"
+					],
+					"path": [
+						"data",
+						"3.0",
+						"onecall"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "33.0198",
+							"description": "Latitude for Plano, TX"
+						},
+						{
+							"key": "lon",
+							"value": "-96.6989",
+							"description": "Longitude for Plano, TX"
+						},
+						{
+							"key": "units",
+							"value": "imperial",
+							"description": "Use Fahrenheit for temperature, mph for wind speed"
+						},
+						{
+							"key": "appid",
+							"value": "dc1c736351558d30c78c14fc618756db",
+							"description": "Your OpenWeatherMap API Key"
+						},
+						{
+							"key": "exclude",
+							"value": "",
+							"description": "Optional: exclude parts (current,minutely,hourly,daily,alerts)",
+							"disabled": true
+						},
+						{
+							"key": "lang",
+							"value": "en",
+							"description": "Optional: language for weather descriptions",
+							"disabled": true
+						}
+					]
+				},
+				"description": "**Alternative request showing all available options.**\n\nThis includes:\n- `current`: Current weather\n- `minutely`: Minute-by-minute precipitation for next hour\n- `hourly`: 48 hours of forecasts\n- `daily`: 8 days of forecasts\n- `alerts`: National weather alerts (if any)\n\n**Optional parameters you can enable:**\n- `exclude`: Comma-separated list to exclude data parts (current,minutely,hourly,daily,alerts)\n- `lang`: Language code for weather descriptions (en, es, fr, etc.)\n\n**Your current API excludes:**\n- `minutely`: Not needed for e-ink display\n- `alerts`: Not implemented in display views yet\n\nYou could add alerts to your API in the future if desired."
+			},
+			"response": []
+		},
+		{
+			"name": "Test API Key Validity",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.openweathermap.org/data/3.0/onecall?lat=33.0198&lon=-96.6989&appid=dc1c736351558d30c78c14fc618756db",
+					"protocol": "https",
+					"host": [
+						"api",
+						"openweathermap",
+						"org"
+					],
+					"path": [
+						"data",
+						"3.0",
+						"onecall"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "33.0198"
+						},
+						{
+							"key": "lon",
+							"value": "-96.6989"
+						},
+						{
+							"key": "appid",
+							"value": "dc1c736351558d30c78c14fc618756db"
+						}
+					]
+				},
+				"description": "**Simple test request to verify your API key is valid.**\n\nExpected responses:\n- **200 OK**: API key is valid and working\n- **401 Unauthorized**: Invalid API key or subscription issue\n- **429 Too Many Requests**: Rate limit exceeded\n\n**Common 401 errors:**\n- API key not activated yet (can take a few hours)\n- One Call API 3.0 subscription not active\n- API key entered incorrectly\n\n**Your API key:** dc1c736351558d30c78c14fc618756db"
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "openweather_api_key",
+			"value": "dc1c736351558d30c78c14fc618756db",
+			"type": "string"
+		},
+		{
+			"key": "latitude",
+			"value": "33.0198",
+			"type": "string"
+		},
+		{
+			"key": "longitude",
+			"value": "-96.6989",
+			"type": "string"
+		},
+		{
+			"key": "location",
+			"value": "Plano, TX",
+			"type": "string"
+		}
+	]
+}

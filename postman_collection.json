@@ -1,0 +1,119 @@
+{
+	"info": {
+		"_postman_id": "life-display-api-collection",
+		"name": "Life Display API",
+		"description": "API for ESP32 e-ink display - provides weather and time data for display rendering",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Weather",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "VHepLbjoX71Kjbs9Omwg22cRBnYg1dmramVBTkxg",
+						"type": "text",
+						"description": "API Key for authentication"
+					}
+				],
+				"url": {
+					"raw": "https://39y6krq6p5.execute-api.us-east-1.amazonaws.com/prod/weather",
+					"protocol": "https",
+					"host": [
+						"39y6krq6p5",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"prod",
+						"weather"
+					]
+				},
+				"description": "Returns complete weather data for display rendering:\n- Current weather conditions (temp, feels like, humidity, wind, description, icon)\n- Hourly forecast for next 12 hours\n- Daily forecast for next 7 days\n\nAll temperatures in Fahrenheit, wind speeds in mph.\n\nResponse includes:\n- viewType: 'weather'\n- location: 'Plano, TX'\n- timezone: 'America/Chicago'\n- current: {temperature, feelsLike, humidity, windSpeed, description, icon}\n- hourly: Array of 12 hourly forecasts\n- daily: Array of 7 daily forecasts\n- timestamp: ISO 8601 timestamp"
+			},
+			"response": []
+		},
+		{
+			"name": "Time",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "VHepLbjoX71Kjbs9Omwg22cRBnYg1dmramVBTkxg",
+						"type": "text",
+						"description": "API Key for authentication"
+					}
+				],
+				"url": {
+					"raw": "https://39y6krq6p5.execute-api.us-east-1.amazonaws.com/prod/time",
+					"protocol": "https",
+					"host": [
+						"39y6krq6p5",
+						"execute-api",
+						"us-east-1",
+						"amazonaws",
+						"com"
+					],
+					"path": [
+						"prod",
+						"time"
+					]
+				},
+				"description": "Returns current time and date information for display rendering:\n- Personalized greeting based on time of day\n- Formatted date and day of week\n- Time in both 12-hour and 24-hour formats\n\nResponse includes:\n- viewType: 'time'\n- greeting: 'Good Morning' | 'Good Afternoon' | 'Good Evening'\n- date: 'January 19, 2026'\n- dayOfWeek: 'Sunday'\n- time: '2:30 PM' (12-hour)\n- time24h: '14:30' (24-hour)\n- timezone: 'America/Chicago'\n- timestamp: ISO 8601 timestamp"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "VHepLbjoX71Kjbs9Omwg22cRBnYg1dmramVBTkxg",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "x-api-key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://39y6krq6p5.execute-api.us-east-1.amazonaws.com/prod",
+			"type": "string"
+		},
+		{
+			"key": "apiKey",
+			"value": "VHepLbjoX71Kjbs9Omwg22cRBnYg1dmramVBTkxg",
+			"type": "string"
+		}
+	]
+}
